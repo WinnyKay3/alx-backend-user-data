@@ -4,9 +4,10 @@ import re
 from typing import List
 
 
-def filter_datum(f: List[str], r: str, m: str, s: str) -> str:
+def filter_datum(fields: List[str], redaction: str,
+                 message: str, separator: str) -> str:
     """Filter datum filters fields with redaction"""
-    for field in f:
+    for f in fields:
         message = re.sub(
-            fr"(?<!\w)({field}=)([^;{s}]+)", fr"\1{r}", m)
+            fr"(?<!\w)({f}=)([^;{separator}]+)", fr"\1{redaction}", message)
     return message
