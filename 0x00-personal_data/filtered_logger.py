@@ -6,6 +6,7 @@ from typing import List
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "ip",)
 
+
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """Filter datum filters fields with redaction"""
@@ -34,11 +35,12 @@ class RedactingFormatter(logging.Formatter):
         self._style.fmt = self.FORMAT
         return super().format(record)
 
+
 def get_logger() -> logging.Logger:
-  """Get the logger"""
-  logger = logging.Logger("user_data", logging.INFO)
-  handler = logging.StreamHandler()
-  formatter = RedactingFormatter(PII_FIELDS)
-  handler.setFormatter(formatter)
-  logger.addHandler(handler)
-  return logger
+    """Get the logger"""
+    logger = logging.Logger("user_data", logging.INFO)
+    handler = logging.StreamHandler()
+    formatter = RedactingFormatter(PII_FIELDS)
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    return logger
