@@ -43,3 +43,39 @@ def unauthorized(error) -> str:
     """ Unauthorized handler
     """
     return jsonify({"error": "Unauthorized"}), 401
+
+
+@app.errorhandler(403)
+def forbidden(error) -> str:
+    """ Forbidden handler
+    """
+    return jsonify({"error": "Forbidden"}), 403
+
+
+@app.before_request
+def before_request() -> str:
+    """ Before request handler
+    """
+    if auth is None:
+        return
+    if auth.require_auth(
+            path=request.path,
+            exclude_paths=[
+                '/api/v1/status/',
+                '/api/v1/unauthorized/',
+                '/api/v1/forbidden/',
+                '/api/v1/auth_session/login/',
+            ],
+    ):
+        if auth.authorization_header(request) is None and auth.session_cookie(
+                request) is None:
+            abort(401)
+        if auth.current_user(request) is None:
+            abort(403)
+    request.current_user = auth.current_user(request)
+
+
+if __name__ == "__main__":
+    host = getenv("API_HOST", "0.0.0.0")
+    port = getenv("API_PORT", "5000")
+    app.run(host=host, port=port)
